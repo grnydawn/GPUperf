@@ -5,7 +5,7 @@ JSRUNFLAGS := -n1 -a1 -c1 -g1 --smpiargs="-disable_gpu_hooks"
 include ../../Makefile.inc
 
 cpu:
-	echo "No CPU code"
+	@echo "echo no CPU code" > ${CPUEXE} ; chmod +x ${CPUEXE}
 
 acc: cuda
 

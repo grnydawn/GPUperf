@@ -42,7 +42,7 @@ PROGRAM vectorAdd
 
     deallocate (a, b, c)
    
-    print *, "End of program"
+    print *, "SUM(C) = ", SUM(C)
 
     call nvtxEndRange
 
