@@ -1,0 +1,9 @@
+*.exe
+*.obj
+*.mod
+*.tar
+*.qdrep
+*.ncu-rep
+*.swp
+*.o
+*.nc
