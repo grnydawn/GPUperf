@@ -1,25 +1,13 @@
-APP := vecadd
+NAME := vecadd_cuda
 
-NCUFLAGS :=  --nvtx --force-overwrite --target-processes all --export ${APP} \
-             --set=full
+JSRUNFLAGS := -n1 -a1 -c1 -g1 --smpiargs="-disable_gpu_hooks"
 
-NSYSPROFILEFLAGS := -o ${APP} --cuda-memory-usage=true --force-overwrite=true \
-			--trace=cuda,nvtx,osrt,openacc
+include ../../Makefile.inc
 
-nsight: nsys ncu
-	tar -cvzhf ${APP}.tar ${APP}.qdrep ${APP}.ncu-rep *.cu
+cpu:
+	echo "No CPU code"
 
-nsys: build
-	nsys profile ${NSYSPROFILEFLAGS} ${APP}.exe
+acc: cuda
 
-ncu: build
-	ncu ${NCUFLAGS} ${APP}.exe
-
-build: ${APP}.cu
-	nvcc -o ${APP}.exe ${APP}.cu
-
-cleanall: clean
-	rm -f ${APP}.qdrep ${APP}.ncu-rep
-
-clean:
-	rm -f ${APP}.exe ${APP}.tar
+cuda: vecadd.cu
+	nvcc -o ${ACCEXE} $<
