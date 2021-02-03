@@ -1,3 +1,5 @@
+! See https://developer.nvidia.com/blog/customize-cuda-fortran-profiling-nvtx/
+
 module nvtx
 
 use iso_c_binding
