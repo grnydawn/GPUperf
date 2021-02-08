@@ -39,10 +39,19 @@ PROGRAM vectorAdd
     END DO
     !$acc end parallel
     call nvtxEndRange
+ 
+    call nvtxStartRange("ACC PARALLEL 3")
+    !$acc parallel num_gangs(1024)
+    !$acc loop gang vector
+    DO i=1, N
+        c(i) = a(i) + b(i)
+    END DO
+    !$acc end parallel
+    call nvtxEndRange
+  
+    print *, "SUM(C) = ", SUM(C)
 
     deallocate (a, b, c)
-   
-    print *, "SUM(C) = ", SUM(C)
 
     call nvtxEndRange
 

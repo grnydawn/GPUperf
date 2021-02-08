@@ -23,7 +23,7 @@ PROGRAM matrixMultiply
 
 
     call nvtxStartRange("WARMUP")
-    !$acc parallel
+    !$acc parallel num_gangs(N) vector_length(N)
     !$acc loop
     DO i=1, N
         DO j=1, N
@@ -40,7 +40,7 @@ PROGRAM matrixMultiply
     call verify(A, B, C, N)
 
     call nvtxStartRange("ver1: gang-vector, none, none")
-    !$acc parallel
+    !$acc parallel num_gangs(N) vector_length(N)
     !$acc loop gang vector
     DO i=1, N
         DO j=1, N
@@ -57,7 +57,7 @@ PROGRAM matrixMultiply
     call verify(A, B, C, N)
 
     call nvtxStartRange("ver2: gang, none, vector")
-    !$acc parallel
+    !$acc parallel num_gangs(N) vector_length(N)
     !$acc loop gang
     DO i=1, N
         DO j=1, N
@@ -75,7 +75,7 @@ PROGRAM matrixMultiply
     call verify(A, B, C, N)
 
     call nvtxStartRange("ver3: gang(collapse), none, vector")
-    !$acc parallel
+    !$acc parallel vector_length(N)
     !$acc loop gang collapse(2)
     DO i=1, N
         DO j=1, N
@@ -92,13 +92,13 @@ PROGRAM matrixMultiply
 
     call verify(A, B, C, N)
 
-    call nvtxStartRange("ver4: gang(collapse) independent, none, vector")
-    !$acc parallel
-    !$acc loop gang collapse(2) independent
+    call nvtxStartRange("ver4: gang(collapse), none, vector independent")
+    !$acc parallel vector_length(N)
+    !$acc loop gang collapse(2)
     DO i=1, N
         DO j=1, N
             tmp = 0.0_8
-            !$acc loop vector
+            !$acc loop vector independent
             DO k=1, N
                 tmp = tmp + A(i, k) * B(k, j)
             END DO
