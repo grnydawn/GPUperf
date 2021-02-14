@@ -228,6 +228,7 @@ contains
     !! TODO: THREAD ME
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !Apply the tendencies to the fluid state
+    !$omp parallel do collapse(2)
     !$acc parallel loop copyin(state_init, tend) copyout(state_out)
     do ll = 1 , NUM_VARS
       do k = 1 , nz
@@ -257,6 +258,7 @@ contains
     !! TODO: THREAD ME
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !Compute fluxes in the x-direction for each cell
+    !$omp parallel do private(stencil,vals,d3_vals,r,u,w,t,p)
     !$acc parallel loop gang copyout(flux), copyin(state, hy_dens_theta_cell, hy_dens_cell)
     do k = 1 , nz
       !$acc loop vector private(stencil,vals,d3_vals)
@@ -291,6 +293,7 @@ contains
     !! TODO: THREAD ME
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !Use the fluxes to compute tendencies for each cell
+    !$omp parallel do collapse(2)
     !$acc parallel loop copyout(tend) copyin(flux)
     do ll = 1 , NUM_VARS
       do k = 1 , nz
@@ -319,6 +322,7 @@ contains
     !! TODO: THREAD ME
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !Compute fluxes in the x-direction for each cell
+    !$omp parallel do private(stencil,vals,d3_vals,r,u,w,t,p)
     !$acc parallel loop gang copyout(flux) copyin(hy_dens_int, state, hy_pressure_int, hy_dens_theta_int)
     do k = 1 , nz+1
       !$acc loop vector private(stencil,vals,d3_vals)
@@ -358,6 +362,7 @@ contains
     !! TODO: THREAD ME
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !Use the fluxes to compute tendencies for each cell
+    !$omp parallel do collapse(2)
     !$acc parallel loop copyout(tend) copyin(state, flux)
     do ll = 1 , NUM_VARS
       do k = 1 , nz
@@ -389,6 +394,7 @@ contains
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !! DELETE THE SERIAL CODE BELOW AND REPLACE WITH MPI
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !$omp parallel do collapse(2)
     !$acc parallel loop copy(state)
     do ll = 1 , NUM_VARS
       do k = 1 , nz
@@ -402,6 +408,7 @@ contains
 
     if (data_spec_int == DATA_SPEC_INJECTION) then
       if (myrank == 0) then
+        !$omp parallel do private(z)
         do k = 1 , nz
           z = (k_beg-1 + k-0.5_rp)*dz
           if (abs(z-3*zlen/4) <= zlen/16) then
@@ -425,6 +432,7 @@ contains
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !! TODO: THREAD ME
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    !$omp parallel do collapse(2) private(mnt_deriv,xloc,x)
     !$acc parallel loop copy(state)
     do ll = 1 , NUM_VARS
       do i = 1-hs,nx+hs
@@ -527,6 +535,7 @@ contains
     !! Initialize the cell-averaged fluid state via Gauss-Legendre quadrature
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     state = 0
+    !$omp parallel do private(x,z,r,u,w,t,hr,ht)
     do k = 1-hs , nz+hs
       do i = 1-hs , nx+hs
         !Initialize the state to zero
@@ -560,6 +569,7 @@ contains
     !Compute the hydrostatic background state over vertical cell averages
     hy_dens_cell = 0
     hy_dens_theta_cell = 0
+    !$omp parallel do private(z,r,u,w,t,hr,ht)
     do k = 1-hs , nz+hs
       do kk = 1 , nqpoints
         z = (k_beg-1 + k-0.5_rp) * dz + (qpoints(kk)-0.5_rp)*dz
@@ -575,6 +585,7 @@ contains
       enddo
     enddo
     !Compute the hydrostatic background state at vertical cell interfaces
+    !$omp parallel do private(z,r,u,w,t,hr,ht)
     do k = 1 , nz+1
       z = (k_beg-1 + k-1) * dz
       if (data_spec_int == DATA_SPEC_COLLISION      ) call collision      (0._rp,z,r,u,w,t,hr,ht)
@@ -799,6 +810,7 @@ contains
     endif
 
     !Store perturbed values in the temp arrays for output
+    !$omp parallel do
     do k = 1 , nz
       do i = 1 , nx
         dens (i,k) = state(i,k,ID_DENS)
@@ -863,6 +875,7 @@ contains
     mass = 0
     te   = 0
 
+    !!$omp parallel do collapse(2) reduction(+:mass,te)
     !$acc parallel loop reduction(+:mass,te) copyin(hy_dens_cell, &
     !$acc hy_dens_theta_cell, state)
     do k = 1 , nz

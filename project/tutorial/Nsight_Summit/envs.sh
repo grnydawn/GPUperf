@@ -7,4 +7,4 @@ module load pgi/19.9 \
 			spectrum-mpi/10.3.1.2-20200121 \
 			parallel-netcdf/1.8.1
 
-export OMP_NUM_THREADS=64
+export OMP_NUM_THREADS=42

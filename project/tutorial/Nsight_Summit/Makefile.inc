@@ -14,7 +14,7 @@ ACCEXE := ${NAME}.acc.exe
 CC := pgcc
 FC := pgfortran
 OMP := -mp
-DEBUG := -Minfo=accel -g -Mcuda='lineinfo' ../../nvtx.f90 -L${CUDA_DIR}/lib64 -lnvToolsExt
+DEBUG := -Minfo=accel,loop -g -Mcuda='lineinfo' ../../nvtx.f90 -L${CUDA_DIR}/lib64 -lnvToolsExt
 CACCFLAGS := -acc ${DEBUG}
 CFLAGS := ${DEBUG} ${OMP}
 FACCFLAGS := -acc ${DEBUG}

@@ -1,5 +1,6 @@
 NAME := miniweather_ver0
-JSRUNFLAGS := -n1 -a1 -c1 -g1 --smpiargs="-disable_gpu_hooks"
+#JSRUNFLAGS := -n1 -a1 -c32 -g1 --smpiargs="-disable_gpu_hooks"
+JSRUNFLAGS := -n1 -g1 -c42 --smpiargs="-disable_gpu_hooks" -brs
 
 include ../../Makefile.inc
 
