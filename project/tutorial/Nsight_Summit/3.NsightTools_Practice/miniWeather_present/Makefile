@@ -1,6 +1,5 @@
-NAME := miniweather_ver0
-#JSRUNFLAGS := -n1 -a1 -c32 -g1 --smpiargs="-disable_gpu_hooks"
-JSRUNFLAGS := -n1 -g1 -c42 --smpiargs="-disable_gpu_hooks" -brs
+NAME := miniweather_present
+JSRUNFLAGS := -n1 -a1 -c1 -g1 --smpiargs="-disable_gpu_hooks"
 
 include ../../Makefile.inc
 
@@ -9,9 +8,10 @@ include ../../Makefile.inc
 
 TEST_DEFS := -Mpreprocess -D_NX=100 -D_NZ=50 -D_SIM_TIME=40 -D_OUT_FREQ=400 -D_DATA_SPEC=DATA_SPEC_THERMAL
 
-cpu: miniWeather_ver0.f90
+cpu: miniWeather_present.f90
 	${MPIFC} $< ${MPIFFLAGS} ${TEST_DEFS} -o ${CPUEXE}
 	#${MPIFC} $< ${MPIFACCFLAGS} -ta=multicore ${TEST_DEFS} -o ${ACCEXE}
 
-acc: miniWeather_ver0.f90
+acc: miniWeather_present.f90
+	#${MPIFC} $< ${MPIFACCFLAGS} -ta=tesla:managed,cc70 ${TEST_DEFS} -o ${ACCEXE}
 	${MPIFC} $< ${MPIFACCFLAGS} -ta=tesla:pinned,cc70 ${TEST_DEFS} -o ${ACCEXE}
