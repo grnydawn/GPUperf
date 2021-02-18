@@ -91,7 +91,7 @@
       elapsed_time = real(end - begin) / real(rate)
 
       WRITE(*, *) "################################################################"
-      WRITE(*, *) "#                          RESLT                               #"
+      WRITE(*, *) "#                          RESULT                              #"
       WRITE(*, *) "################################################################"
       WRITE(*, *)
       WRITE(*, "(A,I2,A,I10,A,I8)")  "   NX = ",_NX,", NELEM = ",_NELEM, &
@@ -101,7 +101,7 @@
       WRITE(*, "(A,E15.7)") "   MIN(fly) : expected = -0.1050566E+01 result = ", &
             MINVAL(fly)
       WRITE(*, "(A,I10)") "   Original # calculations : ", nit*nelem*npts*(nx*nx*7+2*nx+4)
-      WRITE(*, "(A)") "   Original elapsed time (sec) on Summit : 0.2620629966"
+      WRITE(*, "(A)") "   Original elapsed time (sec) on Summit : 0.0834790021"
       WRITE(*, "(A,F14.10)") "   Current elapsed time (sec) : ", elapsed_time
       !WRITE(*, "(A,F14.10,A)") '   Completed in ', elapsed_time, ' seconds'
       WRITE(*, *)
